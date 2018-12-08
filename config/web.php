@@ -53,14 +53,14 @@ $config = [
 			],
 		],
 		'db' => $db,
-		/*
 		'urlManager' => [
 			'enablePrettyUrl' => true,
 			'showScriptName' => false,
 			'rules' => [
+				'<action:(signin|logout|signup|activate)>' => '/site/<action>',
+    			'<controller>/<action>' => '<controller>/<action>',
 			],
 		],
-		*/
 	],
 	'params' => $params,
 ];

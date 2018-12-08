@@ -43,16 +43,24 @@ AppAsset::register($this);
 				break;
 
 			case 'signup':
-				$navItems[] = ['label' => 'Авторизация', 'url' => ['/site/signin']];
+				$navItems[] = ['label' => 'Вход', 'url' => ['/site/signin']];
 				break;
 		}
 	} else {
+		$navItems[] = '<li><span class="navbar-text">' 
+			. Yii::$app->user->identity->email 
+			. '</span></li>';
+
+		$navItems[] = '<li><span class="navbar-text">Баллы: <span class="badge badge-success">' 
+			. Yii::$app->user->identity->score 
+			. '</span></span></li>';
+
 		$navItems[] = '<li>'
 			. Html::beginForm(['/site/logout'], 'post')
-			. Yii::$app->user->identity->email
 			. Html::submitButton(
-				'Logout',
-				['class' => 'btn btn-link logout']
+				'<span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>'
+				. '<span class="sr-only">Выход</span>',
+				['class' => 'btn btn-link logout', 'title' => 'Выйти']
 			)
 			. Html::endForm()
 			. '</li>';

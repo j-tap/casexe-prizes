@@ -5,11 +5,13 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\helpers\Url;
+use app\models\User;
 
 class Signup extends Model 
 {
 	public $email;
 	public $password;
+	public $key;
 
 	public function Rules()
 	{
@@ -17,29 +19,35 @@ class Signup extends Model
 			[['email','password'], 'required'],
 			['email','email'],
 			['email','unique','targetClass'=>'app\models\User'],
-			['password','string','min'=>2,'max'=>30]
+			['password','string','min'=>2,'max'=>30],
 		];
 	}
 
+	/* Register new user (return bool) */
 	public function signup()
 	{
 		$user = new User();
+		$user->key = $this->key;
 		$user->email = $this->email;
 		$user->setPassword($this->password);
 		return $user->save();
 	}
 
-	public function sendMail($toEmail)
+	/* Send to user email mail with activation key */
+	public function sendMail($attrs)
 	{
-		$aSiteUrl = parse_url(Url::home(true));
+		$site = Url::home(true);
+		$aSiteUrl = parse_url($site);
 		$domain = $aSiteUrl['host'];
 		$sitename = Yii::$app->name;
-		$fromEmail = 'noreply@' . $domain;
-		$subject = 'Регистрация на сайте '. $site;
+		$activate = $site . 'activate?key=' . $attrs['key'];
 
-		Yii::$app->mailer->compose('signup', compact('domain','sitename'))
+		$fromEmail = 'noreply@' . $domain;
+		$subject = 'Регистрация на сайте '. $sitename;
+
+		Yii::$app->mailer->compose('signup', compact('activate','sitename'))
 			->setFrom([$fromEmail => $sitename])
-			->setTo($toEmail)
+			->setTo($attrs['email'])
 			->setSubject($subject)
 			->send();
 	}

@@ -4,8 +4,29 @@ html,
 body {
 	height: 100%;
 	min-width: 320px;
+	line-height: 1.4;
+}
+body::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url('../img/bg.png') repeat 50% 50% transparent;
+	opacity: .3;
+	pointer-events: none;
 }
 
+.btn {
+	transition: color .2s ease-in, background .2s ease-in, box-shadow .2s ease-in;
+}
+
+.badge-error {background-color: #b94a48}
+.badge-warning {background-color: #f89406}
+.badge-success {background-color: #468847}
+.badge-info {background-color: #3a87ad}
+.badge-inverse {background-color: #333333}
 
 /* 			Helpers			 */
 
@@ -20,6 +41,7 @@ body {
 .mb-3 {margin-bottom: 30px}
 .mb-4 {margin-bottom: 40px}
 .mb-5 {margin-bottom: 50px}
+
 
 /*			Navbar			*/
 
@@ -65,6 +87,7 @@ body {
 	height: auto;
 	margin: 0 auto -60px;
 	padding: 0 0 60px;
+	position: relative;
 }
 .wrap > .container {
 	padding: 70px 15px 20px;

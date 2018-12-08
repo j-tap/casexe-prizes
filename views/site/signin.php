@@ -1,10 +1,10 @@
-<h1 class="text-center mb-4">Авторизация</h1>
+<h1 class="text-center mb-4">Вход</h1>
 
 <?php
 use yii\helpers\Html;
 use \yii\widgets\ActiveForm;
 
-$form = ActiveForm::begin(['id' => 'formSignin']);
+$form = ActiveForm::begin(['id'=>'formSignin']);
 ?>
 <div class="row">
 	<div class="col-sm-4 col-sm-offset-4 col-8 col-offset-2">

@@ -18,10 +18,11 @@ class Signin extends Model
         ];
     }
 
+    /* Custom validate password */
     public function validatePassword($attribute,$params)
     {
         if (!$this->hasErrors()) {
-            $user = $this->getUser();
+            $user = $this->getCurrent();
 
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute,'Проверьте правильность введённых данных');
@@ -29,7 +30,8 @@ class Signin extends Model
         }
     }
 
-    public function getUser()
+    /* Get current user by email (return array) */
+    public function getCurrent()
     {
         return User::findOne(['email'=>$this->email]);
     }
