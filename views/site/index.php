@@ -1,5 +1,6 @@
 <?php
 use yii\bootstrap\Modal;
+use yii\bootstrap\Button;
 ?>
 
 <h1 class="text-center mb-4">Розыгрыш призов</h1>
@@ -29,9 +30,14 @@ use yii\bootstrap\Modal;
 
 <? Modal::begin([
 	'header'=>false,
-	'footer'=>false,
+	'footer'=>'
+		<button id="modalPrizeDismiss" class="btn btn-warning">Отказаться</button>
+		<button id="modalPrizeAccept" class="btn btn-success">Прянять</button>
+	',
 	'id'=>'modalPrize',
 	'size'=>'modal-lg',
 ]); ?>
+
+<h4 id="modalPrizeTitle"></h4>
 
 <? Modal::end(); ?>

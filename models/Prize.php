@@ -32,12 +32,8 @@ class Prize extends activeRecord
 		$category = Lottery::$category['name'];
 		$params = Lottery::$setting;
 		
-		switch ($category) {
-			case 'score':
-				self::$count = Lottery::getSecureRand( $params[$category . '_max'], $params[$category . '_min'] );
-				break;
-
-			case 'money':
+		switch (true) {
+			case ($params[$category . '_min'] && $params[$category . '_max']):
 				self::$count = Lottery::getSecureRand( $params[$category . '_max'], $params[$category . '_min'] );
 				break;
 

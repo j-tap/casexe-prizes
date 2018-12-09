@@ -130,7 +130,7 @@ body::before {
 	-moz-animation: gradient 3s ease infinite, flash linear .9s infinite;
 	animation: gradient 3s ease infinite, flash linear .9s infinite;
 }
-s
+
 @media(max-width: 767px) {
 	.section-getprizes .panel {
 		margin-left: -12px;

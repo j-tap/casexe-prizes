@@ -19,6 +19,9 @@ const Lottery = {
 	init () {
 		this.$btnGetPrize = $('#btnGetPrizeAjax');
 		this.$modalPrize = $('#modalPrize');
+		this.$modalPrizeTitle = $('#modalPrizeTitle');
+		this.$modalPrizeAccept = $('#modalPrizeAccept');
+		this.$modalPrizeDismiss = $('#modalPrizeDismiss');
 
 		this.$btnGetPrize.on('click', (event) => {
 			$(event.currentTarget).prop('disabled', true);
@@ -27,34 +30,20 @@ const Lottery = {
 			});
 			return false;
 		});
-	},
 
-	getPrize (fComplete) {
-		$.ajax({
-			url: '/',
-			type: 'POST',
-			data: {'getPrize': true},
-			success: (response) => {
-				oResp = $.parseJSON(response);
-				this.title = oResp.title;
-				this.prize = oResp.prize;
-				this.timeout = oResp.timeout || 0;
-				
-				this.openModal();
+		this.$modalPrizeDismiss.on('click', (event) => {
+			this.dismissPrize();
+			return false;
+		});
 
-				if (this.prize) this.managePrize();
-			},
-			error: () => {
-				console.error('Error get Prize Ajax');
-			},
-			complete: fComplete()
+		this.$modalPrizeAccept.on('click', (event) => {
+			this.acceptPrize();
+			return false;
 		});
 	},
 
 	openModal () {
-		this.$modalPrize.find('.modal-body').empty().append(
-			$('<h4/>', {text: this.title})
-		);
+		this.$modalPrizeTitle.empty().text(this.title);
 		this.$modalPrize.modal('show');
 	},
 
@@ -72,5 +61,48 @@ const Lottery = {
 				
 				break;
 		}
+	},
+
+	getPrize (fComplete) {
+		$.ajax({
+			url: '/',
+			type: 'POST',
+			data: {'getPrize': true},
+			success: (response) => {
+				oResp = $.parseJSON(response);
+				this.title = oResp.title;
+				this.prize = oResp.prize;
+				this.timeout = oResp.timeout || 0;
+				
+				this.openModal();
+			},
+			error: () => {
+				console.error('Error getPrize Ajax');
+			},
+			complete: fComplete()
+		});
+	},
+
+	dismissPrize () {
+		this.$modalPrize.modal('hide');
+	},
+
+	acceptPrize () {
+		if (!this.prize) return true;
+		this.managePrize();
+
+		$.ajax({
+			url: '/',
+			type: 'POST',
+			data: {'acceptPrize': true},
+			success: (response) => {
+				oResp = $.parseJSON(response);
+				console.log(oResp);
+			},
+			error: () => {
+				console.error('Error acceptPrize Ajax');
+			},
+			complete: () => {}
+		});
 	}
 }

@@ -17,7 +17,7 @@ class Lottery extends Model
 	public $prize;
 	public $type;
 
-	/* Union multiple methods for get prize (return object) */
+	/* Union multiple methods for get prize (return array) */
 	public static function getPrize()
 	{
 		self::$setting = Setting::getAll();
@@ -76,24 +76,41 @@ class Lottery extends Model
 		];
 	}
 
-	/* Get random number in range $min and $max (return int) */
-	public static function getSecureRand($max, $min = 1, $isStrict = true)
+	/* if user accept prize */
+	public function acceptPrize()
 	{
-		$diff = intval($max) - $min;
-		if ($diff <= 0) return intval($min);
-		$range = $diff + 1;
-		$bits = ceil( log( ($range), 2) );
-		$bytes = ceil($bits / 8.0);
-		$bitsMax = 1 << $bits;
-		$num = 0;
-		do {
-			$num = hexdec( bin2hex( openssl_random_pseudo_bytes($bytes) ) ) % $bitsMax;
-			if ($num >= $range) {
-				if ($isStrict) continue;
-				$num = $num % $range;
+		
+	}
+
+	/* Get random number in range $min and $max (return int) */
+	public static function getSecureRand($max = 9, $min = 1)
+	{
+		if (function_exists('random_int')) {
+			return random_int($min, $max);
+			
+		} else {
+			if (function_exists('openssl_random_pseudo_bytes')) {
+				$isStrict = true;
+				$diff = $max - $min;
+				if ($diff <= 0) return $min;
+				$range = $diff + 1;
+				$bits = ceil( log( ($range), 2) );
+				$bytes = ceil($bits / 8.0);
+				$bitsMax = 1 << $bits;
+				$num = 0;
+				do {
+					$num = hexdec( bin2hex( openssl_random_pseudo_bytes($bytes) ) ) % $bitsMax;
+					if ($num >= $range) {
+						if ($isStrict) continue;
+						$num = $num % $range;
+					}
+					break;
+				} while (true);
+				return $num + $min;
+				
+			} else {
+				return rand($min, $max);
 			}
-			break;
-		} while (true);
-		return $num + $min;
+		}
 	}
 }

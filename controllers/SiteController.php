@@ -22,9 +22,19 @@ class SiteController extends Controller
 		} elseif (!Yii::$app->user->identity->is_activate) {
 			return $this->redirect(['activate']);
 
-		} elseif (Yii::$app->request->isAjax && Yii::$app->request->post('getPrize')) {
-			$response = Lottery::getPrize();
-			return json_encode($response);
+		} elseif (Yii::$app->request->isAjax) {
+			switch (true) {
+
+				case Yii::$app->request->post('getPrize'):
+					$response = Lottery::getPrize();
+					return json_encode($response);
+					break;
+				
+				case Yii::$app->request->post('acceptPrize'):
+					$response = Lottery::acceptPrize();
+					return json_encode($response);
+					break;
+			}
 		}
 
 		/* Get all possible categories */
