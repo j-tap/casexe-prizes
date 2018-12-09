@@ -23,8 +23,8 @@ class SiteController extends Controller
 			return $this->redirect(['activate']);
 
 		} elseif (Yii::$app->request->isAjax && Yii::$app->request->post('getPrize')) {
-			$model = new Lottery();
-			return $model->run();
+			$response = Lottery::getPrize();
+			return json_encode($response);
 		}
 
 		/* Get all possible categories */
@@ -123,4 +123,16 @@ class SiteController extends Controller
 		}
 	}
 	
+	public function actions()
+	{
+		return [
+			'error' => [
+				'class' => 'yii\web\ErrorAction',
+			],
+			'captcha' => [
+				'class' => 'yii\captcha\CaptchaAction',
+				'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+			],
+		];
+	}
 }

@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use app\models\User2prize;
 
 class User extends activeRecord implements IdentityInterface
 {
@@ -56,6 +57,55 @@ class User extends activeRecord implements IdentityInterface
 		]);
 	}
 
+	/* */
+	public function managePrize($lottery)
+	{
+		$user2prize = new User2prize();
+		$user2prize->add(
+			$this->id, 
+			$lottery->prize['id'], 
+			$lottery->count
+		);
+		
+		switch ($lottery->type) {
+			case 'score':
+				$this->updateScore($lottery->count);
+				break;
+
+			case 'money':
+				// запрос у пользователя данных счёта
+				// сбор данных счёта и суммы денег
+				// денежный перевод на счёт пользователя
+				// изменение статуса в User2prize
+				break;
+
+			case 'gift':
+				// запрос у пользователя данных адреса
+				// отправка запроса менеджеру
+				// изменение статуса в User2prize
+				break;
+		}
+	}
+
+	/* Update user score */
+	public function updateScore($score = 0)
+	{
+		$this->score += $score;
+		return $this->save();
+	}
+
+	/* Get last prize */
+	public function getLastPrize()
+	{
+		return User2prize::getLastByUser($this->id);
+	}
+
+	/* Get all prizes */
+	public function getAllPrizes()
+	{
+		return User2prize::getByUser($this->id);
+	}
+
 	/* Interface */
 
 	public static function findIdentity($id)
@@ -78,5 +128,4 @@ class User extends activeRecord implements IdentityInterface
 	{
 		
 	}
-
 }

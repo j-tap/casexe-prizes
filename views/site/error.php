@@ -17,6 +17,4 @@ $this->title = $name;
         <?= nl2br(Html::encode($message)) ?>
     </div>
 
-    <p>Произошла ошибка на сервере</p>
-
 </div>

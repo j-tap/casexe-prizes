@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 08, 2018 at 12:47 
+-- Generation Time: Dec 08, 2018 at 11:25 
 -- Server version: 5.6.22-log
 -- PHP Version: 5.6.3
 
@@ -51,27 +51,29 @@ INSERT INTO `category_prize` (`id`, `name`, `title`) VALUES
 
 CREATE TABLE IF NOT EXISTS `prize` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
+  `order` int(11) NOT NULL COMMENT 'Field update in all rows during Insert or Delete',
+  `title` varchar(255) NOT NULL,
   `amount` int(11) NOT NULL DEFAULT '0',
   `is_limit` tinyint(1) NOT NULL DEFAULT '1',
   `id_category` int(11) NOT NULL DEFAULT '3',
   PRIMARY KEY (`id`),
   KEY `amount` (`amount`),
   KEY `is_limit` (`is_limit`),
-  KEY `id_category` (`id_category`)
+  KEY `id_category` (`id_category`),
+  KEY `index` (`order`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 --
 -- Dumping data for table `prize`
 --
 
-INSERT INTO `prize` (`id`, `name`, `amount`, `is_limit`, `id_category`) VALUES
-(1, 'Бонусные баллы', 0, 0, 1),
-(2, 'Денежный приз', 1000000, 1, 2),
-(3, 'Яблоко', 1000, 1, 3),
-(4, 'Плюшевый мишка', 500, 1, 3),
-(5, 'Билет в кино', 100, 1, 3),
-(6, 'Велосипед', 10, 1, 3);
+INSERT INTO `prize` (`id`, `order`, `title`, `amount`, `is_limit`, `id_category`) VALUES
+(1, 1, 'Бонусные баллы', 0, 0, 1),
+(2, 2, 'Денежный приз', 1000000, 1, 2),
+(3, 3, 'Яблоко', 1000, 1, 3),
+(4, 4, 'Плюшевый мишка', 500, 1, 3),
+(5, 5, 'Билет в кино', 100, 1, 3),
+(6, 6, 'Велосипед', 20, 1, 3);
 
 -- --------------------------------------------------------
 
@@ -85,6 +87,17 @@ CREATE TABLE IF NOT EXISTS `setting` (
   `title` varchar(255) NOT NULL,
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `setting`
+--
+
+INSERT INTO `setting` (`name`, `value`, `title`) VALUES
+('money_max', '10000', 'Максимальная сумма выигрыша'),
+('money_min', '100', 'Минимальная сумма выигрыша'),
+('score_max', '10', 'Максимальное количество баллов'),
+('score_min', '1', 'Минимальное количество баллов'),
+('score_ratio', '1000', 'Коэффициент конвертации денег в баллы');
 
 -- --------------------------------------------------------
 

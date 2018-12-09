@@ -57,7 +57,7 @@ $config = [
 			'enablePrettyUrl' => true,
 			'showScriptName' => false,
 			'rules' => [
-				'<action:(signin|logout|signup|activate)>' => '/site/<action>',
+				'<action:(signin|logout|signup|activate|error)>' => '/site/<action>',
     			'<controller>/<action>' => '<controller>/<action>',
 			],
 		],

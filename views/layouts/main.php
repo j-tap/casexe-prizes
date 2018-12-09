@@ -51,7 +51,7 @@ AppAsset::register($this);
 			. Yii::$app->user->identity->email 
 			. '</span></li>';
 
-		$navItems[] = '<li><span class="navbar-text">Баллы: <span class="badge badge-success">' 
+		$navItems[] = '<li><span class="navbar-text">Баллы: <span class="badge badge-success" id="userScore">' 
 			. Yii::$app->user->identity->score 
 			. '</span></span></li>';
 
