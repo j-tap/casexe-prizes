@@ -40,7 +40,7 @@
 
 ### Схема
 
-[[http://i.piccy.info/i9/97cddd0c2dea6b039d003e5b8ee85603/1544449627/28006/1287851/raffle_prizes_800.jpg|alt=Схема]]
+<img src="http://i.piccy.info/i9/97cddd0c2dea6b039d003e5b8ee85603/1544449627/28006/1287851/raffle_prizes_800.jpg" alt=" ">
 
 
 ### Развёртывание
