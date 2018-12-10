@@ -44,12 +44,18 @@ const Lottery = {
 		});
 
 		this.$btnModalPrizeDismiss.on('click', (event) => {
-			this.dismissPrize();
+			this.getAjax({type: 'dismissPrize', key: this.key}, () => {
+				this.$modalPrize.modal('hide');
+			});
 			return false;
 		});
 
 		this.$btnModalPrizeAccept.on('click', (event) => {
-			this.acceptPrize();
+			if (!this.prize) return true;
+			this.managePrize();
+			this.getAjax({type: 'acceptPrize', key: this.key}, () => {
+				this.$modalPrize.modal('hide');
+			});
 			return false;
 		});
 	},
@@ -69,7 +75,15 @@ const Lottery = {
 					let $btn = $(event.currentTarget);
 					$btn.prop('disabled', true);
 					this.$modalMoney.modal('hide');
-					this.moneyConvert($btn);
+					
+					this.getAjax({type: 'convertMoney', key: this.key}, (oResp) => {
+						this.$modalMoney.modal('hide');
+						if (oResp.is) User.updateScore(oResp.score);
+						else Msg.show(oResp.title);
+					}, () => {
+						$btn.removeAttr('disabled');
+					});
+
 					return false;
 				});
 
@@ -77,9 +91,20 @@ const Lottery = {
 					if (true) { // нужна валидация
 						let $btn = $(event.currentTarget);
 						$btn.prop('disabled', true);
+						
 						User.cart = this.$inputModalMoneyCart.val();
 						this.$modalMoney.modal('hide');
-						this.moneySend($btn);
+						
+						this.getAjax({
+							type: 'moneySend', 
+							cart: User.cart, 
+							key: this.key
+						}, (oResp) => {
+							this.$modalMoney.modal('hide');
+							Msg.show(oResp.title);
+						}, () => {
+							$btn.removeAttr('disabled');
+						});
 					}
 					return false;
 				});
@@ -95,7 +120,17 @@ const Lottery = {
 						$btn.prop('disabled', true);
 						User.address = this.$inputModalGiftAddress.val();
 						this.$modalGift.modal('hide');
-						this.giftSend($btn);
+						
+						this.getAjax({
+							type: 'giftSend',
+							key: this.key,
+							address: User.address
+						}, (oResp) => {
+							this.$modalMoney.modal('hide');
+							Msg.show(oResp.title);
+						}, () => {
+							$btn.removeAttr('disabled');
+						});
 					}
 					return false;
 				});
@@ -104,7 +139,7 @@ const Lottery = {
 	},
 
 	getPrize (fComplete) {
-		this.getAjax({getPrize: true}, () => {
+		this.getAjax({type: 'getPrize'}, () => {
 			this.key = oResp.prize.key;
 			this.title = oResp.title;
 			this.subtitle = oResp.subtitle;
@@ -123,53 +158,6 @@ const Lottery = {
 			}
 
 		}, fComplete);
-	},
-
-	dismissPrize () {
-		this.getAjax({dismissPrize: true, key: this.key}, () => {
-			this.$modalPrize.modal('hide');
-		});
-	},
-
-	acceptPrize () {
-		if (!this.prize) return true;
-		this.managePrize();
-		this.getAjax({acceptPrize: true, key: this.key}, () => {
-			this.$modalPrize.modal('hide');
-		});
-	},
-
-	moneyConvert ($btn) {
-		this.getAjax({convertMoney: true, key: this.key}, (oResp) => {
-			$btn.removeAttr('disabled');
-			this.$modalMoney.modal('hide');
-			if (oResp.is) User.updateScore(oResp.score);
-			else Msg.show(oResp.title);
-		});
-	},
-
-	moneySend ($btn) {
-		this.getAjax({
-			moneySend: true, 
-			cart: User.cart, 
-			key: this.key
-		}, (oResp) => {
-			$btn.removeAttr('disabled');
-			this.$modalMoney.modal('hide');
-			Msg.show(oResp.title);
-		});
-	},
-
-	giftSend ($btn) {
-		this.getAjax({
-			giftSend: true, 
-			key: this.key,
-			address: User.address
-		}, (oResp) => {
-			$btn.removeAttr('disabled');
-			this.$modalMoney.modal('hide');
-			Msg.show(oResp.title);
-		});
 	},
 
 	getAjax (oData, fSuccess, fComplete) {

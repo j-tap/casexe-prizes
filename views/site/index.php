@@ -67,16 +67,16 @@ use yii\bootstrap\Modal;
 	'options' => ['class'=>'modal-money'],
 ]); ?>
 
-	<h4 class="text-center mb-2">Укажите номер вашей карты для зачисления выигрыша</h4>
-	<div class="form-group mb-3">
-		<input class="form-control" type="text" name="cart" placeholder="0000 0000 0000 0000" id="inputModalMoneyCart">
-	</div>
-
-	<h4 class="text-center mb-2">Или конвертируйте деньги в баллы</h4>
-	<div class="row">
+	<h4 class="text-center mb-2">Конвертируйте деньги в баллы</h4>
+	<div class="row mb-4">
 		<div class="col-sm-4 col-sm-offset-4 col-8 col-offset-2">
 			<button id="btnModalMoneyConvert" class="btn btn-success btn-block">Конвертировать</button>
 		</div>
+	</div>
+
+	<h4 class="text-center mb-2">Или укажите номер вашей карты <br>для зачисления выигрыша</h4>
+	<div class="form-group">
+		<input class="form-control" type="text" name="cart" placeholder="0000 0000 0000 0000" id="inputModalMoneyCart">
 	</div>
 
 <? Modal::end(); ?>

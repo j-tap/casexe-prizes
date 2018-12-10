@@ -19,9 +19,11 @@ class User2prize extends activeRecord
 		return self::find(['id_user' => $id])->all();
 	}
 
-    /*  */
+    /* Get last date row with status > -1 by user id */
 	public static function getLastByUser($id)
 	{
-		return self::find(['id_user' => $id])->orderBy('date DESC')->one();
+		return self::find(['id_user' => $id])
+			->andWhere(['>', 'status', -1])
+			->orderBy('date DESC')->one();
 	}
 }

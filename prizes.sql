@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 08, 2018 at 11:25 
+-- Generation Time: Dec 10, 2018 at 05:01 
 -- Server version: 5.6.22-log
 -- PHP Version: 5.6.3
 
@@ -69,11 +69,11 @@ CREATE TABLE IF NOT EXISTS `prize` (
 
 INSERT INTO `prize` (`id`, `order`, `title`, `amount`, `is_limit`, `id_category`) VALUES
 (1, 1, 'Бонусные баллы', 0, 0, 1),
-(2, 2, 'Денежный приз', 1000000, 1, 2),
-(3, 3, 'Яблоко', 1000, 1, 3),
-(4, 4, 'Плюшевый мишка', 500, 1, 3),
+(2, 2, 'Денежный приз', 1000, 1, 2),
+(3, 3, 'Мандарин', 1000, 1, 3),
+(4, 4, 'Плюшевая свинка', 500, 1, 3),
 (5, 5, 'Билет в кино', 100, 1, 3),
-(6, 6, 'Велосипед', 20, 1, 3);
+(6, 6, 'Сноуборд', 10, 1, 3);
 
 -- --------------------------------------------------------
 
@@ -82,22 +82,25 @@ INSERT INTO `prize` (`id`, `order`, `title`, `amount`, `is_limit`, `id_category`
 --
 
 CREATE TABLE IF NOT EXISTS `setting` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL,
   `value` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 --
 -- Dumping data for table `setting`
 --
 
-INSERT INTO `setting` (`name`, `value`, `title`) VALUES
-('money_max', '10000', 'Максимальная сумма выигрыша'),
-('money_min', '100', 'Минимальная сумма выигрыша'),
-('score_max', '10', 'Максимальное количество баллов'),
-('score_min', '1', 'Минимальное количество баллов'),
-('score_ratio', '1000', 'Коэффициент конвертации денег в баллы');
+INSERT INTO `setting` (`id`, `name`, `value`, `title`) VALUES
+(1, 'interval_get_prize', '15', 'Интервал получения приза для пользователя (сек)'),
+(2, 'money_max', '10000', 'Максимальная сумма выигрыша'),
+(3, 'money_min', '100', 'Минимальная сумма выигрыша'),
+(4, 'score_max', '10', 'Максимальное количество баллов'),
+(5, 'score_min', '1', 'Минимальное количество баллов'),
+(6, 'score_ratio', '1000', 'Коэффициент конвертации денег в баллы');
 
 -- --------------------------------------------------------
 
@@ -114,20 +117,13 @@ CREATE TABLE IF NOT EXISTS `user` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `score` int(11) NOT NULL DEFAULT '0',
   `address` varchar(255) NOT NULL,
+  `cart` varchar(64) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `key` (`key`),
   KEY `token` (`key`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
-
---
--- Dumping data for table `user`
---
-
-INSERT INTO `user` (`id`, `email`, `password`, `key`, `is_activate`, `date`, `score`, `address`) VALUES
-(1, 'j-tap@ya.ru', '$2y$13$vnPDodpBbHwtUwwLLNo29OV5eD/3ejRtVNtb2xoVTvQQ80tK.suMS', '317dce14288a82a41af82367eba402f465d0fbea', 1, '2018-12-08 08:41:10', 0, ''),
-(2, 'ddd@ddd.ddd', '$2y$13$0HYiKc2GMNPeGBNtMgrvg.bK60A.m53l6UTZzCM8YUXYTwGaByi9W', '3a7e52d9ae9267e5f3df810888b1ad33212ddac7', 0, '2018-12-08 08:53:30', 0, '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -136,15 +132,19 @@ INSERT INTO `user` (`id`, `email`, `password`, `key`, `is_activate`, `date`, `sc
 --
 
 CREATE TABLE IF NOT EXISTS `user2prize` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_user` int(11) NOT NULL,
   `id_prize` int(11) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` smallint(6) NOT NULL DEFAULT '1',
-  `amount` int(11) NOT NULL DEFAULT '1',
+  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '-1 - отменён, 1 - ожидает, 2 - подтверждён, 5 - в обработке, 10 - исполнен',
+  `count` int(11) NOT NULL DEFAULT '1',
+  `key` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `id_user` (`id_user`,`id_prize`),
-  KEY `amount` (`amount`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `amount` (`count`),
+  KEY `key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

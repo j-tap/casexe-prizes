@@ -135,7 +135,7 @@ class Lottery extends Model
 		$money = intval($user2prize->count);
 		$k = $setting['score_ratio'];
 
-		if ($money >= $k) {
+		if ($user2prize && $money >= $k) {
 			$score = floor($money / $k);
 			$newScore = intval($user->score) + $score;
 
@@ -159,16 +159,16 @@ class Lottery extends Model
 
 	public function moneySend($key, $cart)
 	{
-		$user2prize = User2prize::findOne(['key' => $key]);
+		$user2prize = User2prize::findOne(['key' => $key, 'status' => 2]);
 		$user = User::findOne($user2prize->id_user);
 
-		if (true) { // нужна валидация
+		if ($user2prize) { // нужна валидация cart
 			$user->cart = $cart;
 			$user->update();
 
 			$client = new Client();
 
-			$response = $client->createRequest()
+			$response = $client->createRequest() // Исправить ошибку fopen()
 				->setMethod('POST')
 				->setUrl('https://sheetsu.com/apis/v1.0su/2ec458232deb') // for test
 				->setData([
@@ -199,13 +199,13 @@ class Lottery extends Model
 
 	public function giftSend($key, $address)
 	{
-		$user2prize = User2prize::findOne(['key' => $key]);
+		$user2prize = User2prize::findOne(['key' => $key, 'status' => 2]);
 		$user = User::findOne($user2prize->id_user);
 
 		$user2prize->status = 5;
 		$user2prize->update();
 
-		if (true) { // нужна валидация
+		if (true) { // нужна валидация address
 			$user->address = $address;
 			$user->update();
 

@@ -25,33 +25,33 @@ class SiteController extends Controller
 		} elseif (Yii::$app->request->isAjax) {
 			$request = Yii::$app->request;
 
-			switch (true) {
-				case $request->post('getPrize'):
+			switch ($request->post('type')) {
+				case 'getPrize':
 					$response = Lottery::getPrize();
 					return json_encode($response);
 					break;
 				
-				case $request->post('dismissPrize'):
+				case 'dismissPrize':
 					$response = Lottery::dismissPrize($request->post('key'));
 					return json_encode($response);
 					break;
 
-				case $request->post('acceptPrize'):
+				case 'acceptPrize':
 					$response = Lottery::acceptPrize($request->post('key'));
 					return json_encode($response);
 					break;
 
-				case $request->post('convertMoney'):
+				case 'convertMoney':
 					$response = Lottery::convertMoney($request->post('key'));
 					return json_encode($response);
 					break;
 
-				case $request->post('moneySend'):
+				case 'moneySend':
 					$response = Lottery::moneySend($request->post('key'), $request->post('cart'));
 					return json_encode($response);
 					break;
 
-				case $request->post('giftSend'):
+				case 'giftSend':
 					$response = Lottery::giftSend($request->post('key'), $request->post('address'));
 					return json_encode($response);
 					break;
