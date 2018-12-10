@@ -7,6 +7,8 @@ use yii\base\Model;
 use app\models\CategoryPrize;
 use app\models\Prize;
 use app\models\Setting;
+use app\models\User2prize;
+use yii\httpclient\Client;
 
 class Lottery extends Model 
 {
@@ -16,6 +18,7 @@ class Lottery extends Model
 	public $count;
 	public $prize;
 	public $type;
+	public $key;
 
 	/* Union multiple methods for get prize (return array) */
 	public static function getPrize()
@@ -40,31 +43,37 @@ class Lottery extends Model
 		$prize = Prize::getRandomByCategory(self::$category['id']);
 
 		if ($prize) {
+			$prize->type = self::$category['name'];
+			$prize->settings = self::$setting;
+			$prize->calcCount();
 			$prize->updateAmount();
 
-			$lottery->count = Prize::$count;
+			$lottery->key = sha1(Yii::$app->user->identity->id . $prize['id'] . time());
+			$lottery->count = $prize->count;
 			$lottery->type = self::$category['name'];
 			$lottery->prize = $prize;
+			
+			$lottery->addUser2prize();
 
-			$user->managePrize($lottery);
-
-			$prizeString = $lottery->prize['title'];
+			$prizeTitle = $lottery->prize['title'];
 			switch ($lottery->type) {
 				case 'score':
-					$prizeString .= " $lottery->count";
+					$prizeTitle .= " $lottery->count";
 					break;
 
 				case 'money':
-					$prizeString .= " в размере $lottery->count руб.";
+					$prizeTitle .= " в размере $lottery->count руб.";
 					break;
 			}
 
 			return [
-				'title' => 'Поздравляем, вы получили: ' . $prizeString . '!',
+				'title' => 'Поздравляем, вы получили:',
+				'subtitle' => $prizeTitle,
 				'prize' => [
-					'id' => $lottery->prize['id'],
+					'key' => $lottery->key,
 					'name' => $lottery->prize['title'],
 					'type' => $lottery->type,
+					'icon' => CategoryPrize::getIconName($lottery->type),
 					'count' => $lottery->count,
 				]
 			];
@@ -76,10 +85,148 @@ class Lottery extends Model
 		];
 	}
 
-	/* if user accept prize */
-	public function acceptPrize()
+	/* if user dismiss prize */
+	public static function dismissPrize($key)
 	{
+		$user2prize = User2prize::findOne(['key' => $key]);
+		$idPrize = $user2prize->id_prize;
+		$count = intval($user2prize->count);
+		$user2prize->status = -1;
+		$user2prize->save();
+
+		$prize = Prize::findOne($idPrize);
+		$prize->updateAmount( $count + intval($prize->amount) );
 		
+		return [];
+	}
+
+	/* if user accept prize */
+	public static function acceptPrize($key)
+	{
+		$user2prize = User2prize::findOne(['key' => $key]);
+		$score = intval($user2prize->count);
+		$idPrize = $user2prize->id_prize;
+		$user2prize->status = 2;
+		$user2prize->save();
+
+		switch (CategoryPrize::getNameByPrizeId($idPrize)) {
+			case 'score':
+				$user = User::findOne(Yii::$app->user->identity->id);
+				$user->score = intval($user->score) + $score;
+				$user->update();
+				break;
+
+			case 'money':
+				break;
+
+			case 'gift':
+				break;
+		}
+
+		return [];
+	}
+
+	public function convertMoney($key)
+	{
+		$user2prize = User2prize::findOne(['key' => $key, 'status' => 2]);
+		$user = User::findOne($user2prize->id_user);
+		$setting = Setting::getAll();
+
+		$money = intval($user2prize->count);
+		$k = $setting['score_ratio'];
+
+		if ($money >= $k) {
+			$score = floor($money / $k);
+			$newScore = intval($user->score) + $score;
+
+			$user->score = $newScore;
+			$user2prize->status = 10;
+
+			$user->update();
+			$user2prize->update();
+
+			return [
+				'is' => true,
+				'score' => $newScore
+			];
+		} else {
+			return [
+				'is' => false,
+				'title' => 'Недостаточно средств для конвертации'
+			];
+		}
+	}
+
+	public function moneySend($key, $cart)
+	{
+		$user2prize = User2prize::findOne(['key' => $key]);
+		$user = User::findOne($user2prize->id_user);
+
+		if (true) { // нужна валидация
+			$user->cart = $cart;
+			$user->update();
+
+			$client = new Client();
+
+			$response = $client->createRequest()
+				->setMethod('POST')
+				->setUrl('https://sheetsu.com/apis/v1.0su/2ec458232deb') // for test
+				->setData([
+					'cart' => $user->cart, 
+					'money' => $user2prize->count, 
+					'email' => $user->email
+				])
+				->send();
+
+			if (!$response) {
+				return [
+					'title' => 'Ошибка отправки'
+				];
+			}
+
+			$user2prize->status = 10;
+			$user2prize->update();
+
+			return [
+				'title' => 'Денежный приз отправлен вам',
+				'response' => $response
+			];
+		}
+		return [
+			'title' => 'Ошибка валидации'
+		];
+	}
+
+	public function giftSend($key, $address)
+	{
+		$user2prize = User2prize::findOne(['key' => $key]);
+		$user = User::findOne($user2prize->id_user);
+
+		$user2prize->status = 5;
+		$user2prize->update();
+
+		if (true) { // нужна валидация
+			$user->address = $address;
+			$user->update();
+
+			return [
+				'title' => 'Приз будет отправлен вам',
+			];
+		}
+		return [
+			'title' => 'Ошибка'
+		];
+	}
+
+	/* */
+	public function addUser2prize()
+	{
+		$user2prize = new User2prize();
+		$user2prize->id_user = Yii::$app->user->identity->id;
+		$user2prize->id_prize = $this->prize['id'];
+		$user2prize->count = $this->count;
+		$user2prize->key = $this->key;
+        return $user2prize->save();
 	}
 
 	/* Get random number in range $min and $max (return int) */

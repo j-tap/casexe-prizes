@@ -8,31 +8,20 @@ use yii\db\ActiveRecord;
 class User2prize extends activeRecord
 {
     /*  */
-	public static function getByUser($id)
+	public static function getByKey($key)
 	{
-		return self::find(['id_user' => $id])->asArray()->all();
-	}
-
-     /*  */
-	public static function getLastByUser($id)
-	{
-		return self::find(['id_user' => $id])->orderBy('date DESC')->asArray()->one();
+		return self::findOne(['key' => $key]);
 	}
 
 	/*  */
-	public function add($id_user, $id_prize, $count = 1)
+	public static function getByUser($id)
 	{
-		$this->id_user = $id_user;
-		$this->id_prize = $id_prize;
-		$this->count = $count;
-        
-		return $this->save();
+		return self::find(['id_user' => $id])->all();
 	}
 
     /*  */
-    public function updateStatus($status = 1)
+	public static function getLastByUser($id)
 	{
-		$this->status = $status;
-		return $this->save();
+		return self::find(['id_user' => $id])->orderBy('date DESC')->one();
 	}
 }

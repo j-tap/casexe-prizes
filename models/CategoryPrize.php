@@ -36,18 +36,30 @@ class CategoryPrize extends activeRecord
 		return $icon;
 	}
 
+	/* Get category name (type prize) by prize id (return str) */
+	public function getNameByPrizeId($idPrize = 0)
+	{
+		$cat = self::find()
+			->select('name')
+			->innerJoin('prize', 'category_prize.id = prize.id_category')
+			->andWhere(['prize.id' => $idPrize])
+			->asArray()
+			->one();
+		return $cat['name'];
+	}
+
 	/* Get random row from table (return array) */
 	public static function getRandom()
 	{
 		$randNumPhp = Lottery::getSecureRand( self::getCount() );
 		//$randNumSql = '( SELECT FLOOR( MAX(`id`) * RAND() ) FROM `category_prize` LIMIT 1 )';
-		
-		$query = "SELECT `id`, `name` FROM `category_prize`
-			WHERE `id` >= $randNumPhp
-			ORDER BY `id`
-			LIMIT 1";
 
-		return self::findBySql($query)->asArray()->one();
+		return self::find()
+           ->select(['id', 'name'])
+		   ->andWhere(['>=', 'id', $randNumPhp])
+		   ->orderBy('id')
+		   ->asArray()
+           ->one();
 	}
 
 	/* Get count rows in table (return int) */

@@ -23,15 +23,36 @@ class SiteController extends Controller
 			return $this->redirect(['activate']);
 
 		} elseif (Yii::$app->request->isAjax) {
-			switch (true) {
+			$request = Yii::$app->request;
 
-				case Yii::$app->request->post('getPrize'):
+			switch (true) {
+				case $request->post('getPrize'):
 					$response = Lottery::getPrize();
 					return json_encode($response);
 					break;
 				
-				case Yii::$app->request->post('acceptPrize'):
-					$response = Lottery::acceptPrize();
+				case $request->post('dismissPrize'):
+					$response = Lottery::dismissPrize($request->post('key'));
+					return json_encode($response);
+					break;
+
+				case $request->post('acceptPrize'):
+					$response = Lottery::acceptPrize($request->post('key'));
+					return json_encode($response);
+					break;
+
+				case $request->post('convertMoney'):
+					$response = Lottery::convertMoney($request->post('key'));
+					return json_encode($response);
+					break;
+
+				case $request->post('moneySend'):
+					$response = Lottery::moneySend($request->post('key'), $request->post('cart'));
+					return json_encode($response);
+					break;
+
+				case $request->post('giftSend'):
+					$response = Lottery::giftSend($request->post('key'), $request->post('address'));
 					return json_encode($response);
 					break;
 			}
@@ -40,7 +61,7 @@ class SiteController extends Controller
 		/* Get all possible categories */
 		$categories = CategoryPrize::getAll();
 
-		return $this->render('index', compact('categories'));
+		return $this->render('index', compact('categories','user'));
 	}
 
 	/* Action Logout page */

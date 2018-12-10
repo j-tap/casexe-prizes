@@ -108,17 +108,21 @@ body::before {
 	text-align: center;
 }
 
-.section-getprizes .panel-body .glyphicon-thumbs-up {
+.icon-prize.glyphicon {
+	background: linear-gradient(-45deg, #ffdc43, #ff5454, #ff7be9);s
+}
+
+.icon-prize.glyphicon-thumbs-up {
 	background: linear-gradient(-45deg, #43d3ff, #54ff95, #ccff7b);
 }
-.section-getprizes .panel-body .glyphicon-usd {
+.icon-prize.glyphicon-usd {
 	background: linear-gradient(-45deg, #ffdc43, #ff5454, #ff7be9);
 }
-.section-getprizes .panel-body .glyphicon-apple {
+.icon-prize.glyphicon-apple {
 	background: linear-gradient(-45deg, #a97bff, #82a3ff, #9adfff);
 }
 
-.section-getprizes .panel-body .glyphicon {
+.icon-prize.glyphicon {
 	background-size: 400% 400%;
 	
 	background-clip: text;
@@ -138,7 +142,7 @@ body::before {
 	}
 }
 @media(min-width: 768px) {
-	.section-getprizes .panel-body .glyphicon {
+	.icon-prize {
 		font-size: 40px;
 	}
 }
@@ -173,4 +177,16 @@ body::before {
 	0% {opacity: 1} 
 	50% {opacity: .7} 
 	100% {opacity: 1}
+}
+
+.modal:not(.modal-msg) .modal-header {
+	display: none;
+}
+.modal-prize .icon-prize {
+	font-size: 50px;
+}
+@media(min-width: 768px) {
+	.modal-prize .icon-prize {
+		font-size: 80px;
+	}
 }

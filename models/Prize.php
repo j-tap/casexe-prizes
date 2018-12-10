@@ -8,18 +8,16 @@ use app\models\Lottery;
 
 class Prize extends activeRecord
 {
-	public static $count;
+	public $count;
+	public $type;
+	public $settings;
 
 	/* Update field amount in db (return object) */
-	public function updateAmount()
+	public function updateAmount($amountNew = false)
 	{
-		$this->calcCount();
-
 		if ($this->getAttribute('is_limit')) {
-			$amount = intval( $this->getAttribute('amount') ) - self::$count;
-			if ($amount < 0) $amount = 0;
-			
-			$this->amount = $amount;
+			if (!$amountNew) $amountNew = intval($this->amount) - intval($this->count);			
+			$this->amount = $amountNew;
 			$this->save();
 		}
 
@@ -29,16 +27,16 @@ class Prize extends activeRecord
 	/* Calculate params on settings (return object) */
 	public function calcCount()
 	{
-		$category = Lottery::$category['name'];
-		$params = Lottery::$setting;
+		$category = $this->type;
+		$params = $this->settings;
 		
 		switch (true) {
 			case ($params[$category . '_min'] && $params[$category . '_max']):
-				self::$count = Lottery::getSecureRand( $params[$category . '_max'], $params[$category . '_min'] );
+				$this->count = Lottery::getSecureRand( $params[$category . '_max'], $params[$category . '_min'] );
 				break;
 
 			default:
-				self::$count = 1;
+				$this->count = 1;
 				break;
 		}
 

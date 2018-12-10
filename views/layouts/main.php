@@ -8,6 +8,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use app\assets\AppAsset;
+use yii\bootstrap\Modal;
 
 AppAsset::register($this);
 ?>
@@ -78,6 +79,18 @@ AppAsset::register($this);
 		<?= $content ?>
 	</div>
 </div>
+
+<? Modal::begin([
+	'footer'=>'<button class="btn btn-default pull-right" data-dismiss="modal">Ок</button>',
+	'id'=>'modalMsg',
+	'size'=>'modal-md',
+	'options' => ['class'=>'modal-msg'],
+]); ?>
+
+	<h4 class="text-center mb-2" id="modalMsgTitle"></h4>
+	<div id="modalMsgBody"></div>
+
+<? Modal::end(); ?>
 
 <?php $this->endBody() ?>
 </body>
