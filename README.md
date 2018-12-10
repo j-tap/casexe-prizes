@@ -1,6 +1,8 @@
 # Test task for Casexe (web application on Yii framework)
 ## Lottery random prizes
 
+Live preview go to [prize.snow-mesa.com](http://prize.snow-mesa.com)
+
 
 ## Задачи
 
