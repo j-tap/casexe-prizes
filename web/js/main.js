@@ -167,7 +167,7 @@ const Lottery = {
 			data: oData,
 			success: (resp) => {
 				oResp = $.parseJSON(resp);
-				console.log(oResp);
+				//console.log(oResp);
 				fSuccess(oResp);
 			},
 			error: (xhr, exception) => {
