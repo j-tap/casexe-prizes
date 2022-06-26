@@ -1,7 +1,7 @@
 # Test task for Casexe (web application on Yii framework)
 ## Lottery random prizes
 
-Live preview go to [prize.snow-mesa.com](http://prize.snow-mesa.com)
+Live preview go to [prize.vr9.ru](https://prize.vr9.ru/)
 
 
 ## Задачи
@@ -40,9 +40,9 @@ Live preview go to [prize.snow-mesa.com](http://prize.snow-mesa.com)
     - Если предмет - нужно ввести адрес и товар будет отправлен по нему
 10. Если откажемся от приза - ничего не произойдёт, мы сможем сыграть ещё раз. Запись транзакции останется с номером статуса в любом случае (-1 - отменён, 1 - ожидает, 2 - подтверждён, 5 - в обработке, 10 - исполнен). По ней можно вести статистику.
 
-### Схема
+<!-- ### Схема -->
 
-<img src="http://i.piccy.info/i9/97cddd0c2dea6b039d003e5b8ee85603/1544449627/28006/1287851/raffle_prizes_800.jpg" alt=" ">
+<!-- <img src="http://i.piccy.info/i9/97cddd0c2dea6b039d003e5b8ee85603/1544449627/28006/1287851/raffle_prizes_800.jpg" alt=" "> -->
 
 
 ### Развёртывание
